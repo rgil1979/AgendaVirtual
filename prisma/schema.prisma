@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Paciente {
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  nombre               String
+  apellido             String
+  dni                  String    @unique
+  fechaNacimiento      DateTime?
+  telefonoPaciente     String?
+  nombrePadre          String?
+  telefonoPadre        String?
+  nombreMadre          String?
+  telefonoMadre        String?
+  nombreOtroFamiliar   String?
+  telefonoOtroFamiliar String?
+  domicilio            String?
+  motivoConsulta       String?
+  datosEscolares       String?
+  anioInicioConsulta   Int?
+  obraSocial           String?
+  numeroAfiliado       String?
+  diagnostico          String?
+  activo               Boolean   @default(true)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  sesiones Sesion[]
+  turnos   Turno[]
+}
+
+model Sesion {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  pacienteId    String    @db.ObjectId
+  fecha         DateTime
+  notas         String?
+  asistio       Boolean   @default(false)
+  pago          Boolean   @default(false)
+  monto         Float?
+  numeroFactura String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  paciente Paciente @relation(fields: [pacienteId], references: [id])
+}
+
+model Turno {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  pacienteId String   @db.ObjectId
+  fecha      DateTime
+  hora       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  paciente Paciente @relation(fields: [pacienteId], references: [id])
+}
+
+model Usuario {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

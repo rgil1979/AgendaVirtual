@@ -1,0 +1,17 @@
+node_modules
+dist
+
+# Environment — never commit real secrets
+.env
+*.env.local
+
+# SQLite databases (legacy / migration source)
+*.db
+*.sqlite
+
+# Legacy static prototype files
+old/
+
+# Prisma generated client
+/generated/prisma
+
