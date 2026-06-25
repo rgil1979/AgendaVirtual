@@ -9,6 +9,8 @@ import {
   Max,
 } from 'class-validator';
 
+import { Type } from 'class-transformer';
+
 export class CreatePacienteDto {
   @IsString()
   @IsNotEmpty()
@@ -66,8 +68,10 @@ export class CreatePacienteDto {
   @IsString()
   datosEscolares?: string;
 
+  
   @IsOptional()
   @IsInt()
+  @Type(() => Number) 
   @Min(1900)
   @Max(2100)
   anioInicioConsulta?: number;
