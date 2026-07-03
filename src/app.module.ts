@@ -7,9 +7,17 @@ import { AuthModule } from './auth/auth.module';
 import { PacientesModule } from './pacientes/pacientes.module';
 import { SesionesModule } from './sesiones/sesiones.module';
 import { TurnosModule } from './turnos/turnos.module';
+import { GoogleCalendarModule } from './google-calendar/google-calendar.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, PacientesModule, SesionesModule, TurnosModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    PacientesModule,
+    SesionesModule,
+    TurnosModule,
+    GoogleCalendarModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -41,7 +41,6 @@ export class TurnosService {
         ...(excludeId ? { NOT: { id: excludeId } } : {}),
       },
     });
-
     const conflict = turnosDelDia.find((t) => overlaps(t.hora, hora));
     if (conflict) {
       throw new ConflictException(
@@ -109,11 +108,9 @@ export class TurnosService {
     const turno = await this.findOne(id);
     const nuevaFecha = dto.fecha ? new Date(dto.fecha) : turno.fecha;
     const nuevaHora = dto.hora ?? turno.hora;
-
     if (dto.fecha || dto.hora) {
       await this.checkOverlap(nuevaFecha, nuevaHora, id);
     }
-
     return this.prisma.turno.update({
       where: { id },
       data: { fecha: nuevaFecha, hora: nuevaHora },

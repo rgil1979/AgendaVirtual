@@ -51,12 +51,13 @@ model Sesion {
 }
 
 model Turno {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  pacienteId String   @db.ObjectId
-  fecha      DateTime
-  hora       String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  pacienteId    String   @db.ObjectId
+  fecha         DateTime
+  hora          String
+  googleEventId String?  // ← NUEVO: ID del evento en Google Calendar
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   paciente Paciente @relation(fields: [pacienteId], references: [id])
 }
@@ -67,4 +68,19 @@ model Usuario {
   passwordHash String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  googleToken  GoogleCalendarToken?
+}
+
+model GoogleCalendarToken {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  usuarioId    String   @unique @db.ObjectId
+  accessToken  String
+  refreshToken String
+  expiryDate   DateTime
+  calendarId   String   @default("primary")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  usuario      Usuario  @relation(fields: [usuarioId], references: [id])
 }
