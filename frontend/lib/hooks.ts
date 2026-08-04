@@ -71,20 +71,25 @@ export function useDeletePaciente() {
 
 // ── Sesiones ─────────────────────────────────────────────────────────────────
 
+type SesionesResponse = {
+  sesiones: Sesion[];
+  deudaPendiente: number;
+};
+
 export function useSesiones(pacienteId: string, filters: SesionFilters = {}) {
   return useQuery({
     queryKey: ["sesiones", pacienteId, filters],
     queryFn: async () => {
-      const { data } = await api.get<Sesion[]>(
+      const { data } = await api.get<SesionesResponse>(
         `/sesiones/paciente/${pacienteId}`,
         { params: filters }
       );
+
       return data;
     },
     enabled: !!pacienteId,
   });
 }
-
 export function useCreateSesion() {
   const qc = useQueryClient();
   return useMutation({

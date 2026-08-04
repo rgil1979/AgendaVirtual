@@ -26,7 +26,10 @@ export function SesionesPaciente({ pacienteId }: Props) {
   const [filters] = useState<SesionFilters>({ estadoPago: "todos" });
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Sesion | null>(null);
-  const { data: sesiones, isLoading } = useSesiones(pacienteId, filters);
+  const { data, isLoading } = useSesiones(pacienteId, filters);
+
+  const sesiones = data?.sesiones ?? [];
+
   const deleteSesion = useDeleteSesion();
 
   async function handleDelete(id: string) {
