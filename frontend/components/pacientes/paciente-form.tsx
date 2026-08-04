@@ -132,7 +132,15 @@ export function PacienteForm({ paciente, onSuccess }: Props) {
             <Textarea rows={2} {...register("diagnostico")} />
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {field("anioInicioConsulta", "Año de inicio", { type: "number" })}
+            {/* {field("anioInicioConsulta", "Año de inicio", { type: "number" })} */}
+              <Label htmlFor="anioInicioConsulta">Año de inicio</Label>
+                <Input
+                  id="anioInicioConsulta"
+                  
+                  {...register("anioInicioConsulta", {
+                    valueAsNumber: true,
+                  })}
+                />
           </div>
         </div>
       </section>
