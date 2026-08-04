@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import type { InputHTMLAttributes } from "react";
 
 const OBRAS_SOCIALES = [
   "OSDE",
@@ -21,6 +22,8 @@ const OBRAS_SOCIALES = [
   "Particular",
   "Otra",
 ];
+const hoy = new Date().toISOString().split("T")[0];
+
 
 interface Props {
   paciente?: Paciente;
@@ -35,14 +38,34 @@ export function PacienteForm({ paciente, onSuccess }: Props) {
 
   const { register, handleSubmit, setValue, watch, formState: { isSubmitting } } =
     useForm<FormData>({
-      defaultValues: paciente
-        ? {
-            ...paciente,
-            fechaNacimiento: paciente.fechaNacimiento
-              ? paciente.fechaNacimiento.substring(0, 10)
-              : undefined,
-          }
-        : { activo: true },
+      defaultValues: paciente  ? 
+      {
+      nombre: paciente.nombre,
+      apellido: paciente.apellido,
+      dni: paciente.dni,
+      fechaNacimiento: paciente.fechaNacimiento
+        ? paciente.fechaNacimiento.substring(0, 10)
+        : undefined,
+      telefonoPaciente: paciente.telefonoPaciente,
+      nombrePadre: paciente.nombrePadre,
+      telefonoPadre: paciente.telefonoPadre,
+      nombreMadre: paciente.nombreMadre,
+      telefonoMadre: paciente.telefonoMadre,
+      nombreOtroFamiliar: paciente.nombreOtroFamiliar,
+      telefonoOtroFamiliar: paciente.telefonoOtroFamiliar,
+      domicilio: paciente.domicilio,
+      motivoConsulta: paciente.motivoConsulta,
+      datosEscolares: paciente.datosEscolares,
+      anioInicioConsulta: paciente.anioInicioConsulta,
+      obraSocial: paciente.obraSocial,
+      numeroAfiliado: paciente.numeroAfiliado,
+      diagnostico: paciente.diagnostico,
+      activo: paciente.activo,
+    }
+  : {
+      activo: true,
+      anioInicioConsulta: new Date().getFullYear()
+    }
     });
 
   const activo = watch("activo");
@@ -50,6 +73,8 @@ export function PacienteForm({ paciente, onSuccess }: Props) {
   async function onSubmit(data: FormData) {
     try {
       if (paciente) {
+        console.log("DATA ENVIADA:", data);
+
         await update.mutateAsync(data);
         toast.success("Paciente actualizado");
       } else {
@@ -65,32 +90,46 @@ export function PacienteForm({ paciente, onSuccess }: Props) {
     }
   }
 
-  const field = (
-    id: keyof FormData,
-    label: string,
-    opts: { required?: boolean; type?: string } = {}
-  ) => (
+
+const field = (
+  id: keyof FormData,
+  label: string,
+  opts: InputHTMLAttributes<HTMLInputElement> & {
+    required?: boolean;
+  } = {}
+) => {
+  const { required, type, ...rest } = opts;
+
+  return (
     <div className="space-y-1">
-      <Label htmlFor={String(id)}>{label}</Label>
+      <Label htmlFor={String(id)}>
+        {label}
+        {required && <span className="text-destructive ml-1">*</span>}
+      </Label>
+
       <Input
         id={String(id)}
-        type={opts.type ?? "text"}
-        {...register(id, { required: opts.required })}
+        type={type ?? "text"}
+        {...register(id, { required })}
+        {...rest}
       />
     </div>
   );
+};
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    
+    // <form onSubmit={handleSubmit(onSubmit)} autoComplete="off" className="space-y-6"> // QUITAR EL AUTOCOMPLETAR Para luego. Ahora es util
+     <form onSubmit={handleSubmit(onSubmit)}  className="space-y-6">
       <section>
         <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wide mb-3">
           Datos personales
         </h3>
         <div className="grid grid-cols-2 gap-3">
-          {field("nombre", "Nombre *", { required: true })}
-          {field("apellido", "Apellido *", { required: true })}
-          {field("dni", "DNI *", { required: true })}
-          {field("fechaNacimiento", "Fecha de nacimiento", { type: "date" })}
+          {field("nombre", "Nombre ",{ required: true })} 
+          {field("apellido", "Apellido ", { required: true })}
+          {field("dni", "DNI ", { required: true })}
+          {field("fechaNacimiento", "Fecha de nacimiento", { required: true, type: "date", max: hoy })}
           {field("telefonoPaciente", "Teléfono paciente")}
           {field("domicilio", "Domicilio")}
         </div>
@@ -108,7 +147,7 @@ export function PacienteForm({ paciente, onSuccess }: Props) {
           {field("nombreMadre", "Nombre de la madre")}
           {field("telefonoMadre", "Teléfono de la madre")}
           {field("nombreOtroFamiliar", "Otro familiar")}
-          {field("telefonoOtroFamiliar", "Teléfono otro familiar")}
+          {field("telefonoOtroFamiliar", "Teléfono del otro familiar")}
         </div>
       </section>
 
@@ -132,15 +171,7 @@ export function PacienteForm({ paciente, onSuccess }: Props) {
             <Textarea rows={2} {...register("diagnostico")} />
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {/* {field("anioInicioConsulta", "Año de inicio", { type: "number" })} */}
-              <Label htmlFor="anioInicioConsulta">Año de inicio</Label>
-                <Input
-                  id="anioInicioConsulta"
-                  
-                  {...register("anioInicioConsulta", {
-                    valueAsNumber: true,
-                  })}
-                />
+            {field("anioInicioConsulta", "Año de inicio")}
           </div>
         </div>
       </section>
