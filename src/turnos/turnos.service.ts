@@ -18,6 +18,11 @@ function overlaps(horaA: string, horaB: string): boolean {
   return Math.abs(toMinutes(horaA) - toMinutes(horaB)) < DURACION_MINUTOS;
 }
 
+function parseFechaLocal(fechaStr: string): Date {
+  const [anio, mes, dia] = fechaStr.split('-').map(Number);
+  return new Date(anio!, mes! - 1, dia!);
+}
+
 function startOfDay(date: Date): Date {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
@@ -50,7 +55,7 @@ export class TurnosService {
   }
 
   async create(dto: CreateTurnoDto) {
-    const fecha = new Date(dto.fecha);
+    const fecha = parseFechaLocal(dto.fecha);
     await this.checkOverlap(fecha, dto.hora);
     return this.prisma.turno.create({ data: { ...dto, fecha } });
   }
@@ -106,7 +111,7 @@ export class TurnosService {
 
   async update(id: string, dto: UpdateTurnoDto) {
     const turno = await this.findOne(id);
-    const nuevaFecha = dto.fecha ? new Date(dto.fecha) : turno.fecha;
+    const nuevaFecha = dto.fecha ? parseFechaLocal(dto.fecha) : turno.fecha;
     const nuevaHora = dto.hora ?? turno.hora;
     if (dto.fecha || dto.hora) {
       await this.checkOverlap(nuevaFecha, nuevaHora, id);
