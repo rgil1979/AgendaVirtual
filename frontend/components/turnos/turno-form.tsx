@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { toast } from "sonner";
 import { usePacientes, useCreateTurno, useCreateTurnoRecurrente } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
@@ -194,7 +195,8 @@ export function TurnoForm({ defaultDate, onSuccess }: Props) {
               >
                 {Array.from({ length: 12 }, (_, i) => (
                   <option key={i + 1} value={i + 1}>
-                    {format(new Date(2024, i, 1), "MMMM", { locale: { code: "es" } as never })}
+                    {/* ✅ Usar el locale "es" importado correctamente */}
+                    {format(new Date(2024, i, 1), "MMMM", { locale: es })}
                   </option>
                 ))}
               </select>

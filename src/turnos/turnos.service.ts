@@ -55,7 +55,9 @@ export class TurnosService {
   }
 
   async create(dto: CreateTurnoDto) {
-    const fecha = parseFechaLocal(dto.fecha);
+    const [anio, mes, dia] = dto.fecha.split("-").map(Number);
+    const fecha = new Date(anio, mes - 1, dia);
+
     await this.checkOverlap(fecha, dto.hora);
     return this.prisma.turno.create({ data: { ...dto, fecha } });
   }
